@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+<link rel="stylesheet" type="text/CSS" href="projectOne.css">
+
+</head>
+
+<body>
+<div class="content">
+    <div class="center">
+        <h3 class="center">Username</h3>
+        <input type="text" id="username" class="center">
+    </div>
+
+    <div class="center">
+        <h3 class="center">Password</h3>
+        <input type="password" id="userpass" class="center">
+    </div>
+    <br>
+    <span class="center"><button id="submitInput" onclick="submitRequest()">Submit</button></span>
+
+    <span class="center"><button id="forgot" onclick="forgot()">Forgot Pass</button></span>
+
+    <div class="center" class="center">
+        <p id="result" class="center"></p>
+    </div>
+
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+</body>
+
+
+
+<script>
+    var input = document.getElementById("userpass");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("submitInput").click();
+        }
+    });
+
+    function submitRequest() {
+        let user = document.getElementById("username").value;
+        let pass = document.getElementById("userpass").value;
+
+        let employee = {
+            employee_id: 0,
+            fname: "a",
+            lname: "a",
+            username: user,
+            userpass: pass,
+            email: "a",
+            job_id: 0,
+            supervisor_id: 0
+        }
+
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                document.getElementById("result").innerHTML = this.responseText;
+                // Creat a snackbar for pop up
+                if (this.responseText === "LogedIn") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                }
+            }
+
+        }
+
+        xhttp.open("POST", "http://localhost:8080/projectOne/loginScreen.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(employee));
+    }
+
+    function forgot() {
+        location.replace("http://localhost:8080/projectOne/forgotPassword.html");
+    }
+</script>
+
+</html>

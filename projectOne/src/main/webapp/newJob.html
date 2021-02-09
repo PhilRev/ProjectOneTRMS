@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Job</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body onload="open()">
+    <h3>Job Description</h3>
+    <input type="text" maxlength="150" id="jobDes">
+    <select class="form-control" id="depHead"></select>
+    <button type="submit" id="subJob" onclick="newJob()">Submit</button>
+    <button id="quitC" onclick="quitNew()">Cancel</button>
+    <button id="logOut" onclick="logOut()">Log Out</button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    
+</body>
+<script>
+    function open() {
+        let aid = "dep";
+        let xhttp = new XMLHttpRequest();
+        let txt = "";
+        let x;
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                let jsona = JSON.parse(this.responseText);
+
+                console.log(jsona)
+                for (x in jsona) {
+                    txt += "<option value=\"" + jsona[x].job_id + "\">" + jsona[x].job_des + "</option>";
+                }
+                document.getElementById("depHead").innerHTML = txt;
+                open2();
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/newJob.do?id=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function newJob() {
+        let ajob_des = document.getElementById("jobDes").value;
+        let adep_head_id = document.getElementById("depHead").value;
+
+        let Jobs = {
+            id: 0,
+            job_des: ajob_des,
+            dep_head_id: adep_head_id
+        }
+
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "New Job Added") {
+                    location.replace("http://localhost:8080/projectOne/newEmployee.html");
+                } else {
+                    alert(this.responseText);
+                }
+            }
+        }
+
+        xhttp.open("POST", "http://localhost:8080/projectOne/newJob.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(Jobs));
+    }
+
+    function logOut() {
+        xhttp = new XMLHttpRequest();
+        aid = "LogOut";
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 & this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "LogOut") {
+                    location.replace("http://localhost:8080/projectOne/loginScreen.html")
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + aid, true);
+        xhttp.send();
+    }
+    function quitNew() {
+            location.replace("http://localhost:8080/projectOne/viewStatus.html");
+        }
+</script>
+
+</html>

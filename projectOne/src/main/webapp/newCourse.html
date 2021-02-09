@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Course</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <h3>Course or Training Name</h3>
+    <input type="text" id="nameC">
+    <h3>Type of Course or Training</h3>
+    <select class="mdb-select md-form" id="typeC">
+        <option value="" disabled selected>Select type</option>
+        <option value="1">University Courses</option>
+        <option value="2">Seminars</option>
+        <option value="3">Certification Preparation Classes</option>
+        <option value="4">Certification</option>
+        <option value="5">Technical Training</option>
+        <option value="6">Other</option>
+    </select>
+    <h3>Cost</h3>
+    <input type="number" id="costC">
+    <h3>Date of Course or Training</h3>
+    <input type="date" id="sdate">
+    <h3>End Date</h3>
+    <input type="date" id="edate">
+    <h3>Location</h3>
+    <input type="text" id="locC">
+    <button type="submit" id="submitC" onclick="subNew()">Create Listing</button>
+    <button id="quitC" onclick="quitNew()">Cancel</button>
+    <button id="logOut" onclick="logOut()">Log Out</button>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+
+</body>
+<script>
+    function quitNew() {
+        location.replace("http://localhost:8080/projectOne/viewStatus.html");
+    }
+
+    function subNew() {
+        let xhttp = new XMLHttpRequest();
+
+        let x;
+        if (document.getElementById("typeC").value == 1){
+            x = "University Courses";
+        } else if (document.getElementById("typeC").value == 2){
+            x = "Seminars";
+        } else if (document.getElementById("typeC").value == 3){
+            x = "Certification Preparation Classes"
+        } else if (document.getElementById("typeC").value == 4){
+            x = "Certification"
+        } else if (document.getElementById("typeC").value == 5){
+            x = "Technical Training";
+        } else if (document.getElementById("typeC").value == 6){
+            x = "Other";
+        }
+
+        let Training = {
+            training_id: 0,
+            grading_id: document.getElementById("typeC").value,
+            course_name: document.getElementById("nameC").value,
+            course_type: x,
+            course_cost: document.getElementById("costC").value,
+            start_date: document.getElementById("sdate").value,
+            end_date: document.getElementById("edate").value,
+            location: document.getElementById("locC").value
+        };
+
+        console.log(JSON.stringify(Training));
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "Training Added") {
+                    location.replace("http://localhost:8080/projectOne/viewCourses.html");
+                } else {
+                    alert(this.responseText);
+                }
+            }
+        }
+        xhttp.open("POST", "http://localhost:8080/projectOne/newCourse.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(Training));
+    }
+
+    function logOut() {
+        xhttp = new XMLHttpRequest();
+        aid = "LogOut";
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 & this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "LogOut") {
+                    location.replace("http://localhost:8080/projectOne/loginScreen.html")
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + aid, true);
+        xhttp.send();
+    }
+
+    function quitNew() {
+            location.replace("http://localhost:8080/projectOne/viewStatus.html");
+        }
+
+</script>
+
+</html>

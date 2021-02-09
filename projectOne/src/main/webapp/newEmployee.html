@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>New Hire</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body onload="open()">
+    <h3>First Name</h3>
+    <input type="text" id="first">
+    <h3>Last Name</h3>
+    <input type="text" id="last">
+    <h3>Username</h3>
+    <input type="text" id="Uname">
+    <h3>Password</h3>
+    <input type="password" id="uPass">
+    <h3>Confirm Password</h3>
+    <input type="password" id="confirmPass">
+    <h3>Email</h3>
+    <input type="email" id="eeMail">
+    <h3>Position</h3>
+    <button id="nJob" onclick="newJob()">New Job</button>
+    <select class="form-control" id="positionid"></select>
+    <h3>Hiring Supervisor</h3>
+    <select class="form-control" id="supervisorid"></select>
+    <button type="submit" id="subNew" onclick="newSub()">Submit</button>
+    <button type="submit" id="quitN" onclick="quitNew()">Cancel</button>
+    <button id="logOut" onclick="logOut()">Log Out</button>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    
+ </body>
+
+    <script>
+        function open() {
+            let aid = "job";
+            let xhttp = new XMLHttpRequest();
+            let txt = "";
+            let x;
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let jsona = JSON.parse(this.responseText);
+
+                    console.log(jsona)
+                    for (x in jsona) {
+                        txt += "<option value=\"" + jsona[x].job_id + "\">" + jsona[x].job_des + "</option>";
+                    }
+                    document.getElementById("positionid").innerHTML = txt;
+                    open2();
+                }
+            }
+            xhttp.open("GET", "http://localhost:8080/projectOne/newEmployee.do?id=" + aid, true);
+
+            xhttp.send();
+        }
+
+        function open2() {
+            let aid = "sup";
+            let xhttp = new XMLHttpRequest();
+            let txt = "";
+            let x;
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let jsona = JSON.parse(this.responseText);
+
+                    console.log(jsona)
+                    for (x in jsona) {
+                        txt += "<option value=\"" + jsona[x].employee_id + "\">" + jsona[x].fname + " " + jsona[x].lname + "</option>";
+                    }
+                    document.getElementById("supervisorid").innerHTML = txt;
+                }
+            }
+            xhttp.open("GET", "http://localhost:8080/projectOne/newEmployee.do?id=" + aid, true);
+
+            xhttp.send();
+        }
+
+        function newSub() {
+            if (document.getElementById("uPass").value === document.getElementById("confirmPass").value) {
+                let aid = document.getElementById("Uname").value;
+                let xhttp = new XMLHttpRequest();
+                let txt = "";
+                let x;
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        if (this.responseText === "Username good") {
+                            newSub1();
+                        } else {
+                            alert("Username " + this.responseText);
+                        }
+                    }
+                }
+                xhttp.open("GET", "http://localhost:8080/projectOne/newEmployee.do?id=" + aid, true);
+
+                xhttp.send();
+            } else {
+                alert("Passwords don't match.")
+            }
+
+        }
+
+
+        function newSub1() {
+            let aid = document.getElementById("uPass").value;
+            let xhttp = new XMLHttpRequest();
+            let txt = "";
+            let x;
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    if (this.responseText === "Username good") {
+                        subNew();
+                    } else {
+                        alert("Password " + this.responseText);
+                    }
+                }
+            }
+            xhttp.open("GET", "http://localhost:8080/projectOne/newEmployee.do?id=" + aid, true);
+
+            xhttp.send();
+
+        }
+
+        function subNew() {
+            let xhttp = new XMLHttpRequest();
+
+            let Employee = {
+                employee_id: 0,
+                fname: document.getElementById("first").value,
+                lname: document.getElementById("last").value,
+                username: document.getElementById("Uname").value,
+                userpass: document.getElementById("uPass").value,
+                email: document.getElementById("eeMail").value,
+                job_id: document.getElementById("positionid").value,
+                supervisor_id: document.getElementById("supervisorid").value
+            }
+
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.responseText);
+                    if (this.responseText === "Employee Added") {
+                        location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                    } else {
+                        alert(this.responseText);
+                    }
+
+
+                }
+            }
+            xhttp.open("POST", "http://localhost:8080/projectOne/newEmployee.do", true);
+
+            xhttp.setRequestHeader('Content-Type', 'application/json');
+
+            xhttp.send(JSON.stringify(Employee));
+        }
+
+        function newJob() {
+            location.replace("http://localhost:8080/projectOne/newJob.html");
+        }
+
+        function quitNew() {
+            location.replace("http://localhost:8080/projectOne/viewStatus.html");
+        }
+
+        function logOut() {
+        xhttp = new XMLHttpRequest();
+        aid = "LogOut";
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 & this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "LogOut") {
+                    location.replace("http://localhost:8080/projectOne/loginScreen.html")
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + aid, true);
+        xhttp.send();
+    }
+    </script>
+
+</html>

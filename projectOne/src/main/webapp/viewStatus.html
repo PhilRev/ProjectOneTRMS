@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status Page</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body onload="open()">
+
+    <div id="tdata1">
+
+    </div>
+
+    <p id="afterTable1"></p>
+
+    <div id="tdata2">
+
+    </div>
+
+    <p id="afterTable2"></p>
+
+    <div id="tdata3">
+
+    </div>
+
+    <p id="afterTable3"></p>
+
+    <div id="buttonDiv">
+        <span><button onclick="newHire()" id="newHire">New Hire</button><span>
+
+            </span><button onclick="enroll()" id="reqEnroll">View Available Courses</button><span>
+
+            </span style="margin-right: 0%"><button id="logOut" onclick="logOut()">Log Out</button></span>
+
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
+</body>
+<script>
+
+    function open() {
+        let aid = "getPend";
+        let xhttp = new XMLHttpRequest();
+        let txt1 = "";
+        let txt2 = "";
+        let txt3 = "";
+        let txt4 = "";
+        let x;
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "No Courses Pending") {
+                    document.getElementById("afterTable1").innerHTML = this.responseText;
+                } else {
+                    let jsonb = JSON.parse(this.responseText);
+
+                    console.log(jsonb)
+                    for (x in jsonb) {
+                        if (jsonb[x].type === 1) {
+
+                            if (jsonb[x].ytd === 1000) {
+                                txt4 = "all"
+                            } else {
+                                txt4 = "$" + jsonb[x].ytd;
+                            }
+                            txt1 += "<tr><td>" +
+                                jsonb[x].course +
+                                "</td><td>" +
+                                jsonb[x].sdate +
+                                "</td><td>" +
+                                jsonb[x].edate +
+                                "</td><td>" +
+                                jsonb[x].loc +
+                                "</td><td>" +
+                                jsonb[x].app +
+                                "</td><td>" +
+                                jsonb[x].comp +
+                                "</td><td><button onclick=\"editReq(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">Edit</button></td></tr>"
+
+                        } else if (jsonb[x].type === 2) {
+                            txt2 += "<tr><td>" +
+                                jsonb[x].name +
+                                "</td><td>" +
+                                jsonb[x].course;
+                            if (jsonb[x].urg = "y") {
+                                txt2 += "</td><td>" +
+                                    jsonb[x].sdate +
+                                    "</td><td>";
+                            } else {
+                                txt2 += "</td><td>" +
+                                    jsonb[x].sdate +
+                                    "</td><td>";
+                            }
+
+                            txt2 += jsonb[x].edate +
+                                "</td><td><button onclick=\"editReq(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">View</button></td>" +
+
+                                "<td><button onclick=\"approve(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">Approve</button></td>" +
+
+                                "<td><button onclick=\"deny(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">Deny</button></td></tr>";
+
+
+
+                        } else if (jsonb[x].type === 3) {
+
+
+
+                            if (jsonb[x].urg = "y") {
+                                txt3 += "<tr><td style=\"background-color: lightcoral; color: black;\">" +
+                                    jsonb[x].name;
+                            } else {
+                                txt3 += "<tr><td>" +
+                                    jsonb[x].name;
+                            }
+
+                            txt3 += "</td><td>" +
+                                jsonb[x].cost +
+                                "</td>";
+
+                            if (jsonb[x].ovPay === 'n' || jsonb[x].ovPay == 0) {
+                                txt3 += "<td>Standard reimbursment of $" + jsonb[x].procost + ".</td>";
+                            } else if (jsonb[x].ovPay === 'y') {
+                                txt3 += "<td>Modified reimbursment of $" + jsonb[x].procost + " has been approved."
+
+                            } else {
+                                txt3 += "<td>" + jsonb[x].ovPay + " <button onclick=\"appRe(" +
+                                    jsonb[x].request_id +")\">Aprove</button></td>"
+                            }
+
+                            txt3 += "<td>" +
+                                jsonb[x].note +
+                                "</td><td>" +
+                                jsonb[x].left +
+                                "</td>";
+
+
+                            if (jsonb[x].ovYtd === 'n' || jsonb[x].ovYtd === 'y') {
+                                txt3 += "<td>$" + jsonb[x].ytd + "</td>";
+                            } else {
+                                txt3 += "<td>" + jsonb[x].ovYtd + " <button " +
+                                    "onclick=\"apovPay(" + jsonb[x].request_id + ")\">Aprove</button></td>"
+                            }
+
+                            txt3 += "<td><button onclick=\"editReq(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">View</button></td>" +
+
+                                "<td><button onclick=\"approve(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">Approve</button></td>" +
+
+                                "<td><button onclick=\"deny(" +
+                                jsonb[x].request_id +
+                                ")\" value=\"" + jsonb[x].request_id +
+                                "\">Deny</button></td></tr>"
+
+                        }
+                    }
+                    if (txt1 != "") {
+                        document.getElementById("tdata2").innerHTML = "<span><h3>Your Requests" +
+                            "</h3></span><span><h4>You have used " + txt4 + " of your yearly fund.</h4></span><div div=\"container\"><table " +
+                            "class=\"table table-striped table-bordered table-hover\"" +
+                            "><thead class=\"table-dark\"><tr><th>Course</th><th>Start Date" +
+                            "</th><th>End Date</th><th>Location</th><th>Approval Status</th><th>" +
+                            "Completion Criteria</th><th>Edit Request</th></tr></thead><tbody>" +
+                            txt1 + "</tbody></table>"
+                    }
+                    if (txt2 != "") {
+                        document.getElementById("tdata1").innerHTML = "<h3>Requests" +
+                            " Requiring Your Approval</h3><div div=\"container\"><table " +
+                            "class=\"table table-striped table-bordered table-hover\"" +
+                            "><thead class=\"table-dark\"><tr><th>Employee" +
+                            "</th><th>Course</th><th>Start Date</th><th>End Date</th><th>See Full Form</th>" +
+                            "<th>Approve</th><th>Deny</th></tr></thead><tbody>" +
+                            txt2 + "</tbody></table></div>"
+                    }
+
+                    if (txt3 != "") {
+                        document.getElementById("tdata3").innerHTML = "<h3>Requests" +
+                            " Requiring Your Approval</h3><div div=\"container\"><table class=\"table " +
+                            "table-striped table-bordered table-hover\"><thead class=\"" +
+                            "table-dark\"><tr><th>Name</th><th>Cost</th><th>Requested " +
+                            "Reimbursement</th><th>Justification</th><th>Standrd Funds " +
+                            "Available</th><th>YTD Reimbursement</th>" +
+                            "<th>View Full Form</th><th>Approve</th><th>Deny</th></tr></thead><tbody>" +
+                            txt3 + "</tbody></table></div>"
+                    }
+                }
+            }
+        }
+
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + aid, true);
+
+        xhttp.send()
+    }
+
+    function deny(x) {
+        let id = "deny";
+        let aid = x;
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText === "y") {
+                    location.reload();
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + id + "&aid=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function approve(x) {
+        let id = "approve";
+        let aid = x;
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText === "y") {
+                    location.reload();
+                    console.log(this.responseText)
+                }
+                console.log(this.responseText)
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + id + "&aid=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function apovPay(x) {
+        let id = "apovPay"
+        let aid = x;
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText === "y") {
+                    location.reload();
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + id + "&aid=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function appRe(x) {
+        let id = "appRe"
+        let aid = x;
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText === "y") {
+                    location.reload();
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + id + "&aid=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function editReq(x) {
+        let id = "reqCou";
+        let aid = x;
+        let xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText = "y") {
+                    location.replace("http://localhost:8080/projectOne/requestTraining.html");
+                } else {
+                    console.log(this.responseText);
+                } 
+            }
+
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + id + "&aid=" + aid, true);
+
+        xhttp.send();
+
+    }
+
+    function newHire() {
+        location.replace("http://localhost:8080/projectOne/newEmployee.html");
+    }
+
+    function enroll() {
+        location.replace("http://localhost:8080/projectOne/viewCourses.html");
+    }
+
+    function logOut() {
+        xhttp = new XMLHttpRequest();
+        aid = "LogOut";
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 & this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "LogOut") {
+                    location.replace("http://localhost:8080/projectOne/loginScreen.html")
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/viewStatus.do?id=" + aid, true);
+        xhttp.send();
+    }
+
+</script>
+
+
+
+</html>

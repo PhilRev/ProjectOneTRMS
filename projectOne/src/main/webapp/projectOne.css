@@ -1,0 +1,14 @@
+@charset "ISO-8859-1";
+
+* {
+    align-content: center;
+    margin: auto;
+    width: 80%;
+
+    padding: 10px;
+  }
+
+  #h3 {
+    text-align: center;
+    
+  }

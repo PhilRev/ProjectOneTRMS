@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Training</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body onload="open()">
+    <h2 id="TitelTop">Tuition Reimbursement Form</h2>
+    <div div="container" id="table1">
+        <h3>Personal Information</h3>
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table=dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>eMail</th>
+                    <th>Supervisor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="empName"></td>
+                    <td id="empPos"></td>
+                    <td id="empMail"></td>
+                    <td id="supName"></td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Courses Information</h3>
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table=dark">
+                <tr>
+                    <th>Course/Training</th>
+                    <th>Type of Training</th>
+                    <th>Location</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Cost</th>
+                    <th>Passing Criteria</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="corName"></td>
+                    <td id="corType"></td>
+                    <td id="loc"></td>
+                    <td id="sDate"></td>
+                    <td id="eDate"></td>
+                    <td id="cost"></td>
+                    <td id="pasCrit"></td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Requested Reimbursement</h3>
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table=dark">
+                <tr>
+                    <th>Tuition</th>
+                    <th>Pass Criteria</th>
+                    <th>Time Off Start</th>
+                    <th>Time Off End</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="tuit"></td>
+                    <td id="rePassCrit"></td>
+                    <td id="reSDate"><input type="date" id="Date1" value="2020-01-01"></td>
+                    <td id="reEDate"><input type="date" id="Date2" value="2020-01-01"></td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Justification</h3>
+        <input id="tuiti" type="text" maxlength="150" width="150em">
+        <div id="hidIn"></div>
+
+        <button id="quitC" onclick="quitNew()">Cancel</button>
+        <button id="logO" onclick="logOut()">Log Out</button>
+        <div id="Del"></div>
+        <div id="grade"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    
+</body>
+
+<script>
+    function grad(){
+        let ret = {
+            reqId: document.getElementById("TopT").innerHTML,
+            grade: document.getElementById("subGrad").innerHTML
+        }
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "Request Complete") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                } else {
+                    alert(this.responseText);
+                }
+            }
+        }
+        xhttp.open("POST", "http://localhost:8080/projectOne/requestTraining.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(ret));
+
+    }
+    function Aprov() {
+        let xhttp = new XMLHttpRequest();
+
+        let ret = {
+            reqId: document.getElementById("TopT").innerHTML,
+            name: document.getElementById("empName").innerHTML,
+            email: document.getElementById("empMail").innerHTML,
+            pos: document.getElementById("empPos").innerHTML,
+            supName: document.getElementById("supName").innerHTML,
+            course: document.getElementById("corName").innerHTML,
+            courseType: document.getElementById("corType").innerHTML,
+            loc: document.getElementById("loc").innerHTML,
+            sdate: document.getElementById("sDate").innerHTML,
+            edate: document.getElementById("eDate").innerHTML,
+            cost: document.getElementById("cost").innerHTML,
+            passCrit: document.getElementById("pasCrit").innerHTML,
+            reimb: document.getElementById("try1").value,
+            repassCrit: document.getElementById("try2").value,
+            resdate: document.getElementById("Date1").value,
+            reedate: document.getElementById("Date2").value,
+            just: document.getElementById("tuiti").value,
+            notes: document.getElementById("hidIn").value,
+            aprove: 1
+
+        };
+
+        console.log(ret);
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "Request Complete") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                } else {
+                    alert(this.responseText);
+                }
+            }
+        }
+        xhttp.open("POST", "http://localhost:8080/projectOne/requestTraining.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(ret));
+
+    }
+    function open() {
+        let aid = "open1";
+        let xhttp = new XMLHttpRequest();
+        let txt = "";
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                let json = JSON.parse(this.responseText);
+                console.log(json);
+            
+                if (json.reqId != null){
+                    document.getElementById("TitelTop").innerHTML = "Tuition Reimbursement Form #<h1 id=\"TopT\">"+ json.reqId + "</h1>";
+                }
+                document.getElementById("empName").innerHTML = json.name;
+                document.getElementById("empPos").innerHTML = json.pos;
+                document.getElementById("empMail").innerHTML = json.email;
+                document.getElementById("supName").innerHTML = json.supName;
+                document.getElementById("corName").innerHTML = json.course;
+                document.getElementById("corType").innerHTML = json.courseType;
+                document.getElementById("loc").innerHTML = json.loc;
+                document.getElementById("sDate").innerHTML = json.sdate;
+                document.getElementById("eDate").innerHTML = json.edate;
+                document.getElementById("cost").innerHTML = json.cost;
+                document.getElementById("pasCrit").innerHTML = json.passCrit;
+                let tuiti = .30 * json.cost;
+                if (json.courseType === "University Courses") {
+                    tuiti = .80 * json.cost;
+                } else if (json.courseType === "Seminars") {
+                    tuiti = .60 * json.cost;
+                } else if (json.courseType === "Certification Preparation Classes") {
+                    tuiti = .75 * json.cost;
+                } else if (json.courseType === "Certification") {
+                    tuiti = json.cost;
+                } else if (json.courseType === "Technical Training") {
+                    tuiti = .90 * json.cost;
+                }
+                document.getElementById("tuit").innerHTML = "<input id=\"try1\" type=\"text\" maxvalue=\"100\" value=\"" + tuiti + "\">";
+                document.getElementById("rePassCrit").innerHTML = "<input id=\"try2\" type=\"text\" maxlength=\"75\" value=\"" + json.passCrit + "\">";
+                document.getElementById("Date1").value = json.resdate;
+                document.getElementById("Date2").value = json.reedate;
+                if (json.just != null) {
+                    document.getElementById("tuiti").value = json.just;
+                    document.getElementById("hidIn").innerHTML = "<input id=\"try3\" type=\"text\" maxvalue=\"150\" value=\"" + json.notes + "\">";
+                    document.getElementById("Del").innerHTML = "<br><button id=\"sendRreq\" onclick=\"amend()\">Update Form</button>";
+                } else {
+                    document.getElementById("hidIn").innerHTML = "<button id=\"sendRreq\" onclick=\"sendReq()\">Submit Request</button>";
+               
+               
+                }
+                if (json.aprove === "y"){
+                    document.getElementById("grade").innerHTML = "<button id=\"subGrad\" onclick=\"approve(" + json.reqId + ",)\">Approve</button>"
+                } else if (json.aprove === "g"){
+                    document.getElementById("grade").innerHTML = "<input id=\"try4\" type=\"text\"><button id=\"sendRreq\" onclick=\"grad()\">Submit Grade</button>";
+                } else if (json.aprove === "e"){
+                    document.getElementById("grade").innerHTML = "<button id=\"Dele\" onclick=\"Delet()\">Delete Request</button>";
+                }
+
+
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/requestTraining.do?id=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function approve(x) {
+        let id = "approve";
+        let aid = x;
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.responseText === "y") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                    console.log(this.responseText)
+                }
+                console.log(this.responseText)
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/requestTraining.do?id=" + id + "&aid=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function sendReq() {
+
+        let xhttp = new XMLHttpRequest();
+
+        let ret = {
+            reqId: document.getElementById("TopT").innerHTML,
+            name: document.getElementById("empName").innerHTML,
+            email: document.getElementById("empMail").innerHTML,
+            pos: document.getElementById("empPos").innerHTML,
+            supName: document.getElementById("supName").innerHTML,
+            course: document.getElementById("corName").innerHTML,
+            courseType: document.getElementById("corType").innerHTML,
+            loc: document.getElementById("loc").innerHTML,
+            sdate: document.getElementById("sDate").innerHTML,
+            edate: document.getElementById("eDate").innerHTML,
+            cost: document.getElementById("cost").innerHTML,
+            passCrit: document.getElementById("pasCrit").innerHTML,
+            reimb: document.getElementById("try1").value,
+            repassCrit: document.getElementById("try2").value,
+            resdate: document.getElementById("Date1").value,
+            reedate: document.getElementById("Date2").value,
+            just: document.getElementById("tuiti").value,
+            notes: document.getElementById("hidIn").value,
+            aprove: 0
+        };
+
+        console.log(ret);
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "Request Complete") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                } else {
+                    alert(this.responseText);
+                }
+            }
+        }
+        xhttp.open("POST", "http://localhost:8080/projectOne/requestTraining.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(ret));
+
+    }
+
+    function logOut() {
+
+        xhttp = new XMLHttpRequest();
+        aid = "LogOut";
+
+        xhttp.onreadystatechange = function () {
+
+            if (this.readyState == 4 & this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "LogOut") {
+                    location.replace("http://localhost:8080/projectOne/loginScreen.html")
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/requestTraining.do?id=" + aid, true);
+
+        xhttp.send();
+    }
+
+    function quitNew() {
+        location.replace("http://localhost:8080/projectOne/viewStatus.html");
+    }
+
+    function Delet() {
+
+        xhttp = new XMLHttpRequest();
+        aid = "Delete";
+        id = document.getElementById("TopT").innerHTML;
+
+        xhttp.onreadystatechange = function () {
+
+            if (this.readyState == 4 & this.status == 200) {
+                console.log(this.responseText);
+                alert(this.responseText);
+                if (this.responseText === "Deleted") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html")
+                }
+            }
+        }
+        xhttp.open("GET", "http://localhost:8080/projectOne/requestTraining.do?id=" + aid + "&aid=" + id, true);
+
+        xhttp.send();
+    }
+
+    function amend() {
+        let xhttp = new XMLHttpRequest();
+
+        let ret = {
+            reqId: document.getElementById("TopT").innerHTML,
+            name: document.getElementById("empName").innerHTML,
+            email: document.getElementById("empMail").innerHTML,
+            pos: document.getElementById("empPos").innerHTML,
+            supName: document.getElementById("supName").innerHTML,
+            course: document.getElementById("corName").innerHTML,
+            courseType: document.getElementById("corType").innerHTML,
+            loc: document.getElementById("loc").innerHTML,
+            sdate: document.getElementById("sDate").innerHTML,
+            edate: document.getElementById("eDate").innerHTML,
+            cost: document.getElementById("cost").innerHTML,
+            passCrit: document.getElementById("pasCrit").innerHTML,
+            reimb: document.getElementById("try1").value,
+            repassCrit: document.getElementById("try2").value,
+            resdate: document.getElementById("Date1").value,
+            reedate: document.getElementById("Date2").value,
+            just: document.getElementById("tuiti").value,
+            notes: document.getElementById("hidIn").value,
+            aprove: 0
+        };
+
+        console.log(ret);
+
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+                if (this.responseText === "Request Complete") {
+                    location.replace("http://localhost:8080/projectOne/viewStatus.html");
+                } else {
+                    alert(this.responseText);
+                }
+            }
+        }
+        xhttp.open("POST", "http://localhost:8080/projectOne/requestTraining.do", true);
+
+        xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        xhttp.send(JSON.stringify(ret));
+    }
+</script>
+
+</html>
